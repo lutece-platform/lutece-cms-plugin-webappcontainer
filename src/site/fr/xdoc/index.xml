@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "//UNKNOWN/" "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+	<properties>
+		<title>Plugin Webappcontainer</title>
+	</properties>
+	<body>
+		<section name="Descriptif du plugin">
+			<subsection name="Introduction">
+				<p>
+					Le plugin Webappcontainer permet d'afficher un site
+					externe dans une page applicative Lutèce (XPage).
+				</p>
+			</subsection>
+		</section>
+	</body>
+</document>

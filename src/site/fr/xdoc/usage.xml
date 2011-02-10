@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "//UNKNOWN/" "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+	<properties>
+		<title>Plugin Webappcontainer - Utilisation</title>
+	</properties>
+	<body>
+		<section name="Gestion des sites externes">
+			<p>
+				Le plugin Webappcontainer dispose d'une interface d'administration des sites
+				externes. Cette interface nommée <i>"Gestion des sites externes"</i> permet
+				de créer, modifier et supprimer un site externe.
+			</p>
+			<center>
+				<img src="user/images/manageSites.png" alt="Liste des sites externes" />
+			</center>
+			<subsection name="Création d'un site externe">
+				<p>
+					Pour créer un site externe, se connecter à l'interface d'administration
+					<i>"Gestion des sites externes".</i>
+				</p>
+				<p>Dans la liste des sites externes, cliquer sur le bouton <i>"Ajouter un site".</i></p>
+				<center>
+					<img src="user/images/createSite.png" alt="Création d'un site externe" />
+				</center>
+				<p>La page de création d'un site externe apparaît avec les champs suivants à renseigner :</p>
+				<table>
+					<tr>
+						<th>Champ</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>Code</td>
+						<td>
+							Nom du site externe le code ne doit pas comporter de caractères
+							spéciaux (uniquement des lettres ou des chiffres)
+						</td>
+					</tr>
+					<tr>
+						<td>Url</td>
+						<td>Url d'accès au site externe</td>
+					</tr>
+					<tr>
+						<td>Description</td>
+						<td>Description du site externe</td>
+					</tr>
+					<tr>
+						<td>Groupe de travail</td>
+						<td>Restriction de l'administration du site externe pour un groupe de travail</td>
+					</tr>
+					<tr>
+						<td>Reconstruire la page HTML</td>
+						<td>
+							<ul>
+								<li>
+									Si cette case est cochée, seul le contenu des balises &lt;head&gt;
+									et &lt;body&gt; sera inséré dans la XPage Lutèce (code HTML valide)
+								</li>
+								<li>
+									Si la case est décochée, la structure du code HTML du site externe sera
+									conservée (le code HTML de la XPage Lutèce ne sera donc pas valide)
+								</li>
+							</ul>
+						</td>
+					</tr>
+					<tr>
+						<td>Rediriger le contenu non-HTML</td>
+						<td>
+							<ul>
+								<li>
+									Si cette case est cochée, le contenu non-HTML (images, CSS,
+									scripts, flux RSS) transitera par le conteneur de webapp
+								</li>
+								<li>
+									Si la case est décochée, l'accès à tous ces éléments se fera
+									directement à partir du site externe
+								</li>
+							</ul>
+							<p>
+								Pour plus d'informations, se référer à la section
+								<i>"Redirection du contenu non-HTML"</i> ci-dessous
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td>Utiliser le proxy</td>
+						<td>
+							Si cette case est cochée, le conteneur de webapp se connectera au site externe
+							par l'intermédiaire du serveur mandataire dont les paramètres de configuration
+							sont définis dans le fichier <i>"webappcontainer.properties".</i>
+						</td>
+					</tr>
+				</table>
+				<p>Cliquer sur le bouton <i>"Créer"</i> pour soumettre le formulaire.</p>
+			</subsection>
+			
+			<subsection name="Modification d'un site externe">
+				<p>
+					Pour accéder à la page de modification d'un site externe, dans la liste
+					des sites externes, cliquer sur le code du site externe à modifier.
+				</p>
+				<center>
+					<img src="user/images/modifySite.png" alt="Modification d'un site externe" />
+				</center>
+				<p>La page de modification est identique à celle de création.</p>
+			</subsection>
+			
+			<subsection name="Suppression d'un site externe">
+				<p>
+					Pour supprimer un site externe, cliquer sur l'icone
+					correspondante (poubelle), dans la colonne <i>"Action".</i>
+				</p>
+				<center>
+					<img src="user/images/removeSite.png" alt="Suppression d'un site externe" />
+				</center>
+			</subsection>
+			
+			<subsection name="Restriction par groupe de travail">
+				<p>Il est possible de restreindre l'administration d'un site externe par groupe de travail.</p>
+				<p><b>Pré requis :</b></p>
+				<ul>
+					<li>
+						L'application Lutèce doit disposer d'un
+						<a href="http://dev.lutece.paris.fr/fr/user/user_management.html#a3.1_Gestion_des_utilisateurs_de_linterface_dadministration">
+							groupe de travail
+						</a>
+						(voir la
+						<a href="http://dev.lutece.paris.fr/fr/user/user_management.html#a3.1.1_Gestion_des_r%C3%B4les_et_des_groupes_de_travail">
+							documentation de création d'un groupe de travail
+						</a>)
+					</li>
+					<li>L'administrateur connecté doit être inscrit dans ce groupe de travail</li>
+				</ul>
+				<p>Modifier le site externe et lui affecter un groupe de travail.</p>
+				<p>
+					Pour vérifier le fonctionnement de la restriction, se connecter à l'interface
+					d'administration avec un utilisateur n'étant pas inscrit à ce groupe de travail.
+				</p>
+			</subsection>
+		</section>
+		
+		<section name="Redirection de contenu non-HTML">
+			<p>
+				Cette fonctionnalité permet de rediriger le contenu non-HTML (images, CSS, scripts, 
+				flux RSS) d'un site externe vers le conteneur de webapp, ou bien alors d'accéder à
+				tous ces éléments directement à partir du site externe.
+			</p>
+			<p>
+				Dans les deux cas, le contenu HTML sera toujours traité par le conteneur de webapp.
+			</p>
+			<subsection name="Redirection de contenu non-HTML activée">
+				<p>
+					Lorsque la redirection du contenu non-HTML est activée (case cochée), alors
+					tous les éléments non-HTML (images, CSS, scripts, flux RSS) du site externe
+					transitent par le conteneur de webapp.
+				</p>
+				<center>
+					<img src="user/images/redirectContent.png" alt="Redirection de contenu non-HTML activée" />
+				</center>
+			</subsection>
+			<subsection name="Redirection de contenu non-HTML désactivée">
+				<p>
+					Lorsque la redirection du contenu non-HTML est désactivée (case décochée),
+					alors l'accès aux éléments non-HTML (images, CSS, scripts, flux RSS) est
+					réalisé directement depuis le site externe.
+				</p>
+				<center>
+					<img src="user/images/noRedirectContent.png" alt="Redirection de contenu non-HTML désactivée" />
+				</center>
+			</subsection>
+			<p><b>Attention :</b></p>
+			<p>
+				Le paramétrage du descripteur de déploiement (web.xml) est nécessaire pour
+				rediriger le contenu non-HTML. Cette procédure est disponible dans la page
+				<i>"Installation",</i> section
+				<a href="install.html"><i>"Paramétrage du descripteur de déploiement (web.xml)".</i></a>
+			</p>
+		</section>
+		
+		<section name="Configuration du plugin Webappcontainer">
+			<p>
+				La configuration du plugin s'effectue dans le fichier de propriétés
+				<i>"WEB-INF/conf/plugins/webappcontainer.properties".</i>
+			</p>
+			<subsection name="Configuration du serveur mandataire">
+				<p>
+					La configuration du serveur mandataire (proxy) s'effectue dans le fichier de
+					configuration du plugin webappcontainer <i>(webappcontainer.properties)</i>
+					grâce aux propriétés suivantes :
+				</p>
+				<table>
+					<tr>
+						<th>Propriété</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>webappcontainer.httpAccess.proxyHost</td>
+						<td>Proxy HTTP</td>
+					</tr>
+					<tr>
+						<td>webappcontainer.httpAccess.proxyPort</td>
+						<td>Port</td>
+					</tr>
+					<tr>
+						<td>webappcontainer.httpAccess.proxyUserName</td>
+						<td>Identifiant utilisateur</td>
+					</tr>
+					<tr>
+						<td>webappcontainer.httpAccess.proxyPassword</td>
+						<td>Mot de passe</td>
+					</tr>
+					<tr>
+						<td>webappcontainer.httpAccess.hostName</td>
+						<td>Nom complet de l'ordinateur hébergeant le conteneur de webapp</td>
+					</tr>
+					<tr>
+						<td>webappcontainer.httpAccess.domainName</td>
+						<td>Domaine de l'ordinateur hébergeant le conteneur de webapp</td>
+					</tr>
+					<tr>
+						<td>webappcontainer.httpAccess.realm</td>
+						<td>Gestionnaire de liste d'utilisateurs / mots de passe</td>
+					</tr>
+				</table>
+			</subsection>
+			
+			<subsection name="Configuration des timeout">
+				<p>Le timeout peut être configuré à deux niveaux :</p>
+				<table>
+					<tr>
+						<th>Propriété</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>webappcontainer.httpAccess.timeoutConnection</td>
+						<td>Paramétrage du timeout au niveau de la connexion</td>
+					</tr>
+					<tr>
+						<td>webappcontainer.httpAccess.timeoutSocket</td>
+						<td>Paramétrage du timeout au niveau du socket</td>
+					</tr>
+				</table>
+				<p><i>Un timeout défini à la valeur <b>0</b> correspond à un timeout infini.</i></p>
+			</subsection>
+			
+			<subsection name="Autres propriétés">
+				<p>D'autres propriétés sont également paramétrables :</p>
+				<table>
+					<tr>
+						<th>Propriété</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>webappcontainer.jtidy.parsing.stopWhenError</td>
+						<td>
+							Permet de stopper le parsing du code HTML dès qu'une erreur est trouvée
+							(par exemple, une balise HTML non fermée)
+						</td>
+					</tr>
+					<tr>
+						<td>webappcontainer.rebuildHtmlPage.includeCSS</td>
+						<td>
+							Permet d'inclure les styles CSS (balises &lt;link&gt; et &lt;style&gt;)
+							dans le &lt;body&gt; de la XPage Lutèce. Cette propriété n'est prise en
+							compte que si l'option <i>"Reconstruire la page HTML"</i> est activée.
+						</td>
+					</tr>
+				</table>
+				<p><i>Par défaut, il est préférable de laisser ces options à la valeur <b>false</b>.</i></p>
+			</subsection>
+		</section>
+		
+		<section name="Affichage d'un site externe">
+			<p>La XPage dédiée à l'affichage d'un site externe se nomme <i>"webappcontainer".</i></p>
+			<p>L'url de connexion est de cette forme :</p>
+			<source>
+http://&lt;host&gt;:&lt;port&gt;/&lt;webapp_name&gt;/jsp/site/Portal.jsp?page=webappcontainer
+			</source>
+			<center>
+				<img src="user/images/displayListSites.png" alt="Liste des sites externes" />
+			</center>
+			<p>Cliquer sur un des sites externes pour l'afficher.</p>
+			<center>
+				<img src="user/images/displaySite.png" alt="Affichage d'un site externe" />
+			</center>
+		</section>
+	</body>
+</document>

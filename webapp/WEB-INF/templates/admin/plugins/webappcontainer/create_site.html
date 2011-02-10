@@ -1,0 +1,41 @@
+<div class="content-box" >
+<h2>#i18n{webappcontainer.create_site.adminTitle}</h2>
+<form method="post" name="create_site" action="jsp/admin/plugins/webappcontainer/DoCreateSite.jsp">
+        <p>
+       		<label for="site_code">#i18n{webappcontainer.create_site.labelCode}</label> * :
+            <input type="text" name="site_code" id="site_code" tabindex="1" size="50" maxlength="50" />
+        </p>
+        <p>
+       		<label for=site_url>#i18n{webappcontainer.create_site.labelUrl}</label> * :
+            <input type="text" name="site_url" id="site_url" tabindex="2" size="50" maxlength="500"/>
+        </p>
+        <p>
+       		<label for="site_description">#i18n{webappcontainer.create_site.labelDescription}</label> * :
+            <input type="text" name="site_description" id="site_description" tabindex="3" size="50" maxlength="500"/>
+        </p>
+		<p>
+            <label for="site_workgroup_key">#i18n{webappcontainer.create_site.labelWorkgroupKey}</label> * :
+			<@combo name="site_workgroup_key" default_value="${workgroup_key_default_value}" items=workgroup_keys_list />
+		</p>
+		<p>
+            <label for="site_rebuild_html_page">&nbsp;</label>&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="checkbox" checked="checked" name="site_rebuild_html_page" id="site_rebuild_html_page" value="true" />#i18n{webappcontainer.create_site.labelRebuildHtmlPage}
+		</p>
+		<p>
+            <label for="site_redirect_non_html_content">&nbsp;</label>&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="checkbox" checked="checked" name="site_redirect_non_html_content" id="site_redirect_non_html_content" value="true" />#i18n{webappcontainer.create_site.labelRedirectNonHtmlContent}
+		</p>
+		<#if proxy_host?has_content && proxy_port?has_content>
+			<p>
+	            <label for="site_use_proxy">&nbsp;</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<input type="checkbox" checked="checked" name="site_use_proxy" id="site_use_proxy" value="true" />#i18n{webappcontainer.create_site.labelUseProxy} (${proxy_host}:${proxy_port})
+			</p>
+		</#if>
+		<p>
+			<input type="submit" value="#i18n{webappcontainer.create_site.buttonLabelCreate}" tabindex="5" class="button" />
+			<input class="button" type="button" onclick="javascript:history.go(-1)" value="#i18n{portal.admin.message.buttonCancel}" />
+		</p>
+</form>
+</div>
+
+

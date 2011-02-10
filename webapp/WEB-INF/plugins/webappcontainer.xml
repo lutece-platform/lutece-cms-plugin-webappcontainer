@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<plug-in>
+    
+    <!-- Plugin Informations -->
+    <name>webappcontainer</name>
+    <class>fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation</class>
+    <version>1.0.0</version>
+    <documentation></documentation>
+    <installation></installation>
+    <changes></changes>
+    <user-guide></user-guide>
+    <description>webappcontainer.plugin.description</description>
+    <provider>webappcontainer.plugin.provider</provider>
+    <provider-url>http://lutece.paris.fr</provider-url>
+    <icon-url>images/admin/skin/plugins/webappcontainer/webappcontainer.png</icon-url>
+    <copyright>Copyright 2001-2009 Mairie de Marseille</copyright>
+    <db-pool-required>1</db-pool-required>
+    
+    
+    <admin-features>
+        <admin-feature>
+            <feature-id>WEBAPPCONTAINER_MANAGEMENT</feature-id>
+            <feature-title>webappcontainer.adminFeature.webappcontainer_management.name</feature-title>
+            <feature-description>webappcontainer.adminFeature.webappcontainer_management.description</feature-description>
+            <feature-level>1</feature-level>
+            <feature-url>jsp/admin/plugins/webappcontainer/ManageSites.jsp</feature-url>
+            <feature-icon-url>images/admin/skin/plugins/webappcontainer/webappcontainer.png</feature-icon-url>
+        </admin-feature>
+    </admin-features>
+    
+    <!-- Applications -->
+    <applications>
+        <application>
+            <application-id>webappcontainer</application-id>
+            <application-class>fr.paris.lutece.plugins.webappcontainer.web.WebappcontainerApp</application-class>
+        </application>
+    </applications>
+    
+</plug-in>
+

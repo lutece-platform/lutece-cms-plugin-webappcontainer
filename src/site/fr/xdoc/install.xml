@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "//UNKNOWN/" "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+	<properties>
+		<title>Plugin Webappcontainer - Installation</title>
+	</properties>
+	<body>
+		<section name="Installation du plugin">
+			<p>L'installation du plugin Webappcontainer ne présente pas de particularités majeures.</p>
+			<subsection name="Installation à partir d'un site Maven 2">
+				<p>Il suffit d'ajouter la dépendance dans le fichier <i>"pom.xml"</i> du site Lutèce.</p>
+				<source>
+&lt;dependencies&gt;
+	...
+	&lt;dependency&gt;
+		&lt;groupId&gt;fr.paris.lutece.plugins&lt;/groupId&gt;
+		&lt;artifactId&gt;plugin-webappcontainer&lt;/artifactId&gt;
+		&lt;version&gt;1.0.0&lt;/version&gt;
+		&lt;type&gt;lutece-plugin&lt;/type&gt;
+	&lt;/dependency&gt;
+	...
+&lt;/dependencies&gt;
+				</source>
+				<p>
+					Pour plus d'information sur la création d'un site Lutèce avec Maven 2, se reporter au tutoriel
+					<a href="http://dev.lutece.paris.fr/wikilutece/index.php?title=R%C3%A9alisation_d%27un_site">
+						<i>"Réalisation d'un site"</i>
+					</a>
+					sur le Wiki Lutèce.
+				</p>
+			</subsection>
+			<subsection name="Installation classique">
+				<p>
+					Le plugin doit être téléchargé depuis le référentiel des composants, puis
+					être décompressé dans une webapp Lutèce disposant déjà d'un cœur Lutèce.
+				</p>
+			</subsection>
+		</section>
+		
+		<section name="Installation de l'environnement">
+			<p>
+				La documentation relative à l'installation d'un environnement pour une
+				application web Lutèce est disponible sur le site du projet Lutèce, section
+				<a href="http://dev.lutece.paris.fr/fr/install.html"><i>"Installation".</i></a>
+			</p>
+		</section>
+		
+		<section name="Paramétrage du descripteur de déploiement (web.xml)">
+			<p>
+				L'ajout de la servlet suivante dans le descripteur de déploiement <i>(web.xml)</i>
+				est nécessaire pour rediriger le contenu non-HTML.
+			</p>
+			<source>
+&lt;web-app&gt;
+	...
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;WebappcontainerServlet&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;fr.paris.lutece.plugins.webappcontainer.web.WebappcontainerResourceServlet&lt;/servlet-class&gt;
+	&lt;/servlet&gt;
+	...
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;WebappcontainerServlet&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;/webappcontainer&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+	...
+&lt;/web-app&gt;
+			</source>
+		</section>
+	</body>
+</document>

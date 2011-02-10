@@ -1,0 +1,41 @@
+<div class="content-box" >
+	<h2>#i18n{webappcontainer.manage_sites.tableLabel}</h2>
+    <table>
+        <tr>
+            <th>#i18n{webappcontainer.manage_sites.columnTitleCode}</th>
+            <th>#i18n{webappcontainer.manage_sites.columnTitleUrl}</th>
+            <th>#i18n{webappcontainer.manage_sites.columnTitleDescription}</th>
+            <th>#i18n{webappcontainer.manage_sites.columnTitleWorkgroup}</th>
+            <th>#i18n{webappcontainer.manage_sites.columnTitleActions}</th>
+        </tr>
+        <#list sites_list as site >
+        <tr>
+            <td>
+                <a href="jsp/admin/plugins/webappcontainer/ModifySite.jsp?site_code=${site.code}" class="bullet-link">
+                    ${site.code!}
+                </a>
+            </td>
+            <td>
+                ${site.url!}
+            </td>
+            <td>
+                ${site.description!}
+            </td>  
+            <td>
+                ${site.workgroup!}
+            </td>     
+            <td>
+				<a href="jsp/admin/plugins/webappcontainer/ConfirmRemoveSite.jsp?site_code=${site.code!}" />
+                    <img src="images/admin/skin/actions/delete.png" alt="#i18n{webappcontainer.manage_sites.actionRemove}" title="#i18n{webappcontainer.manage_sites.actionRemove}" />
+                </a>
+            </td>
+        </tr>					
+        </#list>
+    </table>
+    <form method="post"  action="jsp/admin/plugins/webappcontainer/CreateSite.jsp">
+        <input type="submit" value="#i18n{webappcontainer.manage_sites.buttonAddSite}" class="button" />
+    </form>
+</div>
+
+
+
