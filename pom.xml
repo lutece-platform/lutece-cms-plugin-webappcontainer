@@ -17,7 +17,7 @@
 	<licenses>
 		<license>
 			<name>Lutece license</name>
-			<url>${basedir}/conf/LICENSE.TXT/plugin-webappcontainer</url>
+			<url>${basedir}/conf/LICENSE.TXT</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -45,13 +45,6 @@
 		</dependency>
 	</dependencies>
 	
-    <scm>
-        <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins//plugin-webappcontainer</connection>
-        <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins//plugin-webappcontainer</developerConnection>
-        <url>http://dev.lutece.paris.fr/viewvc/portal/trunk/plugins//plugin-webappcontainer</url>
-    </scm>
-	
-
     <scm>
         <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/cms/plugin-webappcontainer</connection>
         <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/cms/plugin-webappcontainer</developerConnection>
