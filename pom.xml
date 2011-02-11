@@ -17,7 +17,7 @@
 	<licenses>
 		<license>
 			<name>Lutece license</name>
-			<url>${basedir}/conf/LICENSE.TXT</url>
+			<url>${basedir}/conf/LICENSE.TXT/plugin-webappcontainer</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -26,7 +26,7 @@
 		<repository>
 			<id>lutece</id>
 			<name>luteceRepository</name>
-			<url>http://dev.lutece.paris.fr/maven_repository</url>
+			<url>http://dev.lutece.paris.fr/maven_repository/plugin-webappcontainer</url>
 			<layout>default</layout>
 		</repository>
 	</repositories>
@@ -46,15 +46,15 @@
 	</dependencies>
 	
     <scm>
-        <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/</connection>
-        <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/</developerConnection>
-        <url>http://dev.lutece.paris.fr/viewvc/portal/trunk/plugins/</url>
+        <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins//plugin-webappcontainer</connection>
+        <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins//plugin-webappcontainer</developerConnection>
+        <url>http://dev.lutece.paris.fr/viewvc/portal/trunk/plugins//plugin-webappcontainer</url>
     </scm>
 	
 
     <scm>
-        <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/cms</connection>
-        <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/cms</developerConnection>
-        <url>http://dev.lutece.paris.fr/viewvc/portal/trunk/plugins/cms</url>
+        <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/cms/plugin-webappcontainer</connection>
+        <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/cms/plugin-webappcontainer</developerConnection>
+        <url>http://dev.lutece.paris.fr/viewvc/portal/trunk/plugins/cms/plugin-webappcontainer</url>
     </scm>
 </project>
