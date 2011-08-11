@@ -39,7 +39,10 @@
 			<type>lutece-core</type>
 		</dependency>
 	</dependencies>
-	
+	<properties>
+		<componentName>webappcontainer</componentName>
+		<jiraProjectName>WEBAPPCONTAINER</jiraProjectName>
+	</properties>
     <scm>
         <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/cms/plugin-webappcontainer</connection>
         <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/cms/plugin-webappcontainer</developerConnection>
