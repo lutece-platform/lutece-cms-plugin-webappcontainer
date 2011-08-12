@@ -42,6 +42,7 @@
 	<properties>
 		<componentName>webappcontainer</componentName>
 		<jiraProjectName>WEBAPPCONTAINER</jiraProjectName>
+		<jiraComponentId>10503</jiraComponentId>
 	</properties>
     <scm>
         <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/cms/plugin-webappcontainer</connection>
