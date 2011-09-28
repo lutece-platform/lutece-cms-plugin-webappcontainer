@@ -33,122 +33,119 @@
  */
 package fr.paris.lutece.plugins.webappcontainer.util;
 
-import fr.paris.lutece.portal.service.util.AppLogService;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
 import java.io.IOException;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 /**
  * This class provide tools for Urls
  * @author ELY
- *
+ * 
  */
 public final class UrlUtils
 {
-    /**
-     * Private constructor - this class does not need to be instantiated
-     */
-    private UrlUtils(  )
-    {
-    }
+	/**
+	 * Private constructor - this class does not need to be instantiated
+	 */
+	private UrlUtils()
+	{
+	}
 
-    /**
-     * Check if the host of the two url are the same
-     * @param strFirstUrl The first url
-     * @param strSecondUrl The second url
-     * @return true if the host are equals, false else or if an url is malformed (MalformedURLException).
-     */
-    public static boolean hostsEquals( String strFirstUrl, String strSecondUrl )
-    {
-        URL urlFirstUrl = null;
-        URL urlSecondUrl = null;
+	/**
+	 * Check if the host of the two url are the same
+	 * @param strFirstUrl The first url
+	 * @param strSecondUrl The second url
+	 * @return true if the host are equals, false else or if an url is malformed (MalformedURLException).
+	 */
+	public static boolean hostsEquals( String strFirstUrl, String strSecondUrl )
+	{
+		URL urlFirstUrl = null;
+		URL urlSecondUrl = null;
 
-        try
-        {
-            urlFirstUrl = new URL( strFirstUrl );
-            urlSecondUrl = new URL( strSecondUrl );
-        }
-        catch ( MalformedURLException e )
-        {
-            return false;
-        }
+		try
+		{
+			urlFirstUrl = new URL( strFirstUrl );
+			urlSecondUrl = new URL( strSecondUrl );
+		}
+		catch ( MalformedURLException e )
+		{
+			return false;
+		}
 
-        return urlFirstUrl.getHost(  ).equalsIgnoreCase( urlSecondUrl.getHost(  ) );
-    }
+		return urlFirstUrl.getHost().equalsIgnoreCase( urlSecondUrl.getHost() );
+	}
 
-    /**
-    * Convert the specified url
-    * @param strUrl The url to convert
-    * @param strBaseUrlSite The webapp url
-    * @return The converted url
-    */
-    public static String convertRelativeToAbsoluteUrl( String strUrl, String strBaseUrlSite )
-    {
-        String strConvertedUrl = null;
-        URL baseUrlSite = null;
-        AppLogService.debug( "[ConvertUrl] Webapp url = " + strBaseUrlSite );
+	/**
+	 * Convert the specified url
+	 * @param strUrl The url to convert
+	 * @param strBaseUrlSite The webapp url
+	 * @return The converted url
+	 */
+	public static String convertRelativeToAbsoluteUrl( String strUrl, String strBaseUrlSite )
+	{
+		String strConvertedUrl = null;
+		URL baseUrlSite = null;
+		AppLogService.debug( "[ConvertUrl] Webapp url = " + strBaseUrlSite );
 
-        try
-        {
-            baseUrlSite = new URL( strBaseUrlSite );
+		try
+		{
+			baseUrlSite = new URL( strBaseUrlSite );
 
-            URL convertedUrl = new URL( baseUrlSite, strUrl );
+			URL convertedUrl = new URL( baseUrlSite, strUrl );
 
-            strConvertedUrl = convertedUrl.toExternalForm(  );
-        }
-        catch ( MalformedURLException e )
-        {
-            AppLogService.error( "[convertUrl] Malformed Url Exception with url = " + strUrl, e );
+			strConvertedUrl = convertedUrl.toExternalForm();
+		}
+		catch ( MalformedURLException e )
+		{
+			AppLogService.error( "[convertUrl] Malformed Url Exception with url = " + strUrl, e );
 
-            return null;
-        }
+			return null;
+		}
 
-        AppLogService.debug( "[ConvertUrl] " + strUrl + "   ->   " + strConvertedUrl );
+		AppLogService.debug( "[ConvertUrl] " + strUrl + "   ->   " + strConvertedUrl );
 
-        return strConvertedUrl;
-    }
+		return strConvertedUrl;
+	}
 
-    /**
-     * Encode (Base64) the specified Url
-     * @param strUrl The url to encode
-     * @return The encoded url
-     */
-    public static String encodeUrl( String strUrl )
-    {
-        BASE64Encoder encoder = new BASE64Encoder(  );
+	/**
+	 * Encode (Base64) the specified Url
+	 * @param strUrl The url to encode
+	 * @return The encoded url
+	 */
+	public static String encodeUrl( String strUrl )
+	{
+		BASE64Encoder encoder = new BASE64Encoder();
 
-        return encoder.encode( strUrl.getBytes(  ) );
-    }
+		return encoder.encode( strUrl.getBytes() );
+	}
 
-    /**
-     * Decode (Base64) the specified url
-     *
-     * @param strUrl the url to decode
-     * @return The decoded url or null if error (IOException)
-     */
-    public static String decodeUrl( String strUrl )
-    {
-        BASE64Decoder decoder = new BASE64Decoder(  );
-        String strReturnUrl = null;
+	/**
+	 * Decode (Base64) the specified url
+	 * 
+	 * @param strUrl the url to decode
+	 * @return The decoded url or null if error (IOException)
+	 */
+	public static String decodeUrl( String strUrl )
+	{
+		BASE64Decoder decoder = new BASE64Decoder();
+		String strReturnUrl = null;
 
-        try
-        {
-            if ( strUrl != null )
-            {
-                strReturnUrl = new String( decoder.decodeBuffer( strUrl ) );
-            }
-        }
-        catch ( IOException e )
-        {
-            return null;
-        }
+		try
+		{
+			if ( strUrl != null )
+			{
+				strReturnUrl = new String( decoder.decodeBuffer( strUrl ) );
+			}
+		}
+		catch ( IOException e )
+		{
+			return null;
+		}
 
-        return strReturnUrl;
-    }
+		return strReturnUrl;
+	}
 }

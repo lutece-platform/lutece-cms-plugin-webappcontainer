@@ -33,24 +33,8 @@
  */
 package fr.paris.lutece.plugins.webappcontainer.web;
 
-import fr.paris.lutece.plugins.webappcontainer.business.Site;
-import fr.paris.lutece.plugins.webappcontainer.business.WebappResponse;
-import fr.paris.lutece.plugins.webappcontainer.util.HttpAccess;
-import fr.paris.lutece.plugins.webappcontainer.util.HttpAccessException;
-import fr.paris.lutece.plugins.webappcontainer.util.UrlUtils;
-import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
-import fr.paris.lutece.util.url.UrlItem;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.RequestContext;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.servlet.ServletRequestContext;
-import org.apache.commons.httpclient.URI;
-
 import java.io.IOException;
 import java.io.OutputStream;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -60,6 +44,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.RequestContext;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.servlet.ServletRequestContext;
+import org.apache.commons.httpclient.URI;
+
+import fr.paris.lutece.plugins.webappcontainer.business.Site;
+import fr.paris.lutece.plugins.webappcontainer.business.WebappResponse;
+import fr.paris.lutece.plugins.webappcontainer.util.HttpAccess;
+import fr.paris.lutece.plugins.webappcontainer.util.HttpAccessException;
+import fr.paris.lutece.plugins.webappcontainer.util.UrlUtils;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
+import fr.paris.lutece.util.url.UrlItem;
 
 /**
  * Servlet serving document file resources
@@ -67,191 +65,184 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings( "serial" )
 public class WebappcontainerResourceServlet extends HttpServlet
 {
-    private static final String METHOD_POST = "POST";
-    private static final String SESSION_ATTRIBUTE_COOKIES = "HttpWrapper_cookies_";
+	private static final String METHOD_POST = "POST";
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException the servlet Exception
-     * @throws IOException the io exception
-     */
-    protected void processRequest( HttpServletRequest request, HttpServletResponse response )
-        throws ServletException, IOException
-    {
-        OutputStream out = response.getOutputStream(  );
-        String strRequestedUrl = WebappcontainerApp.getRequestUrl( request );
-        Site site = WebappcontainerApp.getSite( request );
+	private static final String SESSION_ATTRIBUTE_COOKIES = "HttpWrapper_cookies_";
 
-        if ( ( strRequestedUrl == null ) || strRequestedUrl.equals( "" ) )
-        {
-            strRequestedUrl = site.getUrl(  );
-        }
+	/**
+	 * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+	 * @param request servlet request
+	 * @param response servlet response
+	 * @throws ServletException the servlet Exception
+	 * @throws IOException the io exception
+	 */
+	protected void processRequest( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
+	{
+		OutputStream out = response.getOutputStream();
+		String strRequestedUrl = WebappcontainerApp.getRequestUrl( request );
+		Site site = WebappcontainerApp.getSite( request );
 
-        WebappResponse webappResponse = null;
+		if ( ( strRequestedUrl == null ) || strRequestedUrl.equals( "" ) )
+		{
+			strRequestedUrl = site.getUrl();
+		}
 
-        try
-        {
-            webappResponse = getWebappResponse( request, strRequestedUrl, site );
-        }
-        catch ( HttpAccessException e )
-        {
-            out.write( ( "Error : " + e ).getBytes(  ) );
-            AppLogService.error( "Error when retrieving external site content (site : " + site.getCode(  ) +
-                ", url : " + strRequestedUrl + ")", e );
-        }
+		WebappResponse webappResponse = null;
 
-        if ( webappResponse != null )
-        {
-            out.write( webappResponse.getContent(  ) );
-        }
+		try
+		{
+			webappResponse = getWebappResponse( request, strRequestedUrl, site );
+		}
+		catch ( HttpAccessException e )
+		{
+			out.write( ( "Error : " + e ).getBytes() );
+			AppLogService.error( "Error when retrieving external site content (site : " + site.getCode() + ", url : " + strRequestedUrl + ")", e );
+		}
 
-        out.flush(  );
-        out.close(  );
-    }
+		if ( webappResponse != null )
+		{
+			out.write( webappResponse.getContent() );
+		}
 
-    /**
-     * Get the webapp response
-     *
-     * @param request The {@link HttpServletRequest} object
-     * @param strRequestedUrl The requested url
-     * @param site The site requested
-     * @return The {@link WebappResponse} object (contain response content, headers, cookies, ...)
-     * @throws HttpAccessException if process cannot access to external site
-     */
-    public static WebappResponse getWebappResponse( HttpServletRequest request, String strRequestedUrl, Site site )
-        throws HttpAccessException
-    {
-        // Get the site content
-        HttpAccess httpAccess = new HttpAccess(  );
-        WebappResponse webappResponse = null;
-        RequestContext requestContext = new ServletRequestContext( request );
-        Map<String, FileItem> fileMap = null;
-        Map<String, String[]> parametersMap = null;
+		out.flush();
+		out.close();
+	}
 
-        if ( ServletFileUpload.isMultipartContent( requestContext ) )
-        {
-            //Multipart
-            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-            fileMap = multipartRequest.getFileMap(  );
+	/**
+	 * Get the webapp response
+	 * 
+	 * @param request The {@link HttpServletRequest} object
+	 * @param strRequestedUrl The requested url
+	 * @param site The site requested
+	 * @return The {@link WebappResponse} object (contain response content, headers, cookies, ...)
+	 * @throws HttpAccessException if process cannot access to external site
+	 */
+	public static WebappResponse getWebappResponse( HttpServletRequest request, String strRequestedUrl, Site site ) throws HttpAccessException
+	{
+		// Get the site content
+		HttpAccess httpAccess = new HttpAccess();
+		WebappResponse webappResponse = null;
+		RequestContext requestContext = new ServletRequestContext( request );
+		Map<String, FileItem> fileMap = null;
+		Map<String, String[]> parametersMap = null;
 
-            parametersMap = getParameterMap( multipartRequest );
-        }
-        else
-        {
-            parametersMap = getParameterMap( request );
-        }
+		if ( ServletFileUpload.isMultipartContent( requestContext ) )
+		{
+			// Multipart
+			MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
+			fileMap = multipartRequest.getFileMap();
 
-        // Get the cookies for the specified site
-        org.apache.commons.httpclient.Cookie[] cookies = (org.apache.commons.httpclient.Cookie[]) request.getSession(  )
-                                                                                                         .getAttribute( SESSION_ATTRIBUTE_COOKIES +
-                site.getCode(  ) );
+			parametersMap = getParameterMap( multipartRequest );
+		}
+		else
+		{
+			parametersMap = getParameterMap( request );
+		}
 
-        httpAccess.initializeState( cookies, site );
+		// Get the cookies for the specified site
+		org.apache.commons.httpclient.Cookie[] cookies = ( org.apache.commons.httpclient.Cookie[] ) request.getSession().getAttribute( SESSION_ATTRIBUTE_COOKIES + site.getCode() );
 
-        if ( !UrlUtils.hostsEquals( site.getUrl(  ), strRequestedUrl ) )
-        {
-            throw new HttpAccessException( "Error : The requested Url does not corresponding with the specified external site.",
-                null );
-        }
+		httpAccess.initializeState( cookies, site );
 
-        try
-        {
-            if ( request.getMethod(  ).equals( METHOD_POST ) )
-            {
-                URI uri = new URI( strRequestedUrl, false );
-                webappResponse = httpAccess.doPost( uri.getEscapedURI(  ), parametersMap, fileMap );
-            }
-            else
-            {
-                // Set the parameters
-                UrlItem requestedUrl = new UrlItem( strRequestedUrl );
+		if ( !UrlUtils.hostsEquals( site.getUrl(), strRequestedUrl ) )
+		{
+			throw new HttpAccessException( "Error : The requested Url does not corresponding with the specified external site.", null );
+		}
 
-                for ( Entry<String, String[]> entry : parametersMap.entrySet(  ) )
-                {
-                    requestedUrl.addParameter( entry.getKey(  ), entry.getValue(  )[0] );
-                }
+		try
+		{
+			if ( request.getMethod().equals( METHOD_POST ) )
+			{
+				URI uri = new URI( strRequestedUrl, false );
+				webappResponse = httpAccess.doPost( uri.getEscapedURI(), parametersMap, fileMap );
+			}
+			else
+			{
+				// Set the parameters
+				UrlItem requestedUrl = new UrlItem( strRequestedUrl );
 
-                URI uri = new URI( requestedUrl.getUrl(  ), false );
+				for ( Entry<String, String[]> entry : parametersMap.entrySet() )
+				{
+					requestedUrl.addParameter( entry.getKey(), entry.getValue()[0] );
+				}
 
-                webappResponse = httpAccess.doGet( uri.getEscapedURI(  ) );
-            }
-        }
-        catch ( Exception e )
-        {
-            AppLogService.error( e.getMessage(  ), e );
-            throw new HttpAccessException( e.getMessage(  ), e );
-        }
+				URI uri = new URI( requestedUrl.getUrl(), true );
 
-        // Set the cookies for the specified site
-        request.getSession(  ).setAttribute( SESSION_ATTRIBUTE_COOKIES + site.getCode(  ), webappResponse.getCookies(  ) );
+				webappResponse = httpAccess.doGet( uri.getEscapedURI() );
+			}
+		}
+		catch ( Exception e )
+		{
+			AppLogService.error( e.getMessage(), e );
+			throw new HttpAccessException( e.getMessage(), e );
+		}
 
-        return webappResponse;
-    }
+		// Set the cookies for the specified site
+		request.getSession().setAttribute( SESSION_ATTRIBUTE_COOKIES + site.getCode(), webappResponse.getCookies() );
 
-    /**
-     * Delete the webappcontainer specifics informations (siteCode and requested url) in the parameter map request
-     * @param request The request
-     * @return The map parameters
-     */
-    private static Map<String, String[]> getParameterMap( HttpServletRequest request )
-    {
-        // Set the parameters
-        Map<String, String[]> parametersMap = request.getParameterMap(  );
-        Map<String, String[]> parametersWithoutContainerInformations = new HashMap<String, String[]>(  );
+		return webappResponse;
+	}
 
-        for ( Entry<String, String[]> entry : parametersMap.entrySet(  ) )
-        {
-            if ( !entry.getKey(  ).equals( WebappcontainerApp.PARAMETER_CODE ) &&
-                    !entry.getKey(  ).equals( WebappcontainerApp.PARAMETER_PAGE ) &&
-                    !entry.getKey(  ).equals( WebappcontainerApp.PARAMETER_WEBAPP_URL ) )
-            {
-                if ( entry.getKey(  ).startsWith( WebappcontainerApp.PARAMETER_PAGE_HACK ) )
-                {
-                    parametersWithoutContainerInformations.put( entry.getKey(  )
-                                                                     .substring( WebappcontainerApp.PARAMETER_PAGE_HACK.length(  ) ),
-                        entry.getValue(  ) );
-                }
-                else
-                {
-                    parametersWithoutContainerInformations.put( entry.getKey(  ), entry.getValue(  ) );
-                }
-            }
-        }
+	/**
+	 * Delete the webappcontainer specifics informations (siteCode and requested url) in the parameter map request
+	 * @param request The request
+	 * @return The map parameters
+	 */
+	private static Map<String, String[]> getParameterMap( HttpServletRequest request )
+	{
+		// Set the parameters
+		Map<String, String[]> parametersMap = request.getParameterMap();
+		Map<String, String[]> parametersWithoutContainerInformations = new HashMap<String, String[]>();
 
-        return parametersWithoutContainerInformations;
-    }
+		for ( Entry<String, String[]> entry : parametersMap.entrySet() )
+		{
+			if ( !entry.getKey().equals( WebappcontainerApp.PARAMETER_CODE ) && !entry.getKey().equals( WebappcontainerApp.PARAMETER_PAGE )
+					&& !entry.getKey().equals( WebappcontainerApp.PARAMETER_WEBAPP_URL ) )
+			{
+				if ( entry.getKey().startsWith( WebappcontainerApp.PARAMETER_PAGE_HACK ) )
+				{
+					parametersWithoutContainerInformations.put( entry.getKey().substring( WebappcontainerApp.PARAMETER_PAGE_HACK.length() ), entry.getValue() );
+				}
+				else
+				{
+					parametersWithoutContainerInformations.put( entry.getKey(), entry.getValue() );
+				}
+			}
+		}
 
-    /** Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException the servlet Exception
-     * @throws IOException the io exception
-     */
-    protected void doGet( HttpServletRequest request, HttpServletResponse response )
-        throws ServletException, IOException
-    {
-        processRequest( request, response );
-    }
+		return parametersWithoutContainerInformations;
+	}
 
-    /** Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException the servlet Exception
-     * @throws IOException the io exception
-     */
-    protected void doPost( HttpServletRequest request, HttpServletResponse response )
-        throws ServletException, IOException
-    {
-        processRequest( request, response );
-    }
+	/**
+	 * Handles the HTTP <code>GET</code> method.
+	 * @param request servlet request
+	 * @param response servlet response
+	 * @throws ServletException the servlet Exception
+	 * @throws IOException the io exception
+	 */
+	protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
+	{
+		processRequest( request, response );
+	}
 
-    /** Returns a short description of the servlet.
-     * @return message
-     */
-    public String getServletInfo(  )
-    {
-        return "Servlet serving file resources of webappcontainer";
-    }
+	/**
+	 * Handles the HTTP <code>POST</code> method.
+	 * @param request servlet request
+	 * @param response servlet response
+	 * @throws ServletException the servlet Exception
+	 * @throws IOException the io exception
+	 */
+	protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
+	{
+		processRequest( request, response );
+	}
+
+	/**
+	 * Returns a short description of the servlet.
+	 * @return message
+	 */
+	public String getServletInfo()
+	{
+		return "Servlet serving file resources of webappcontainer";
+	}
 }

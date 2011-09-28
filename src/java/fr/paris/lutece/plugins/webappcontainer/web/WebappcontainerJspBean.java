@@ -33,12 +33,22 @@
  */
 package fr.paris.lutece.plugins.webappcontainer.web;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.webappcontainer.business.Site;
 import fr.paris.lutece.plugins.webappcontainer.business.SiteHome;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
@@ -48,341 +58,381 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.string.StringUtil;
 import fr.paris.lutece.util.url.UrlItem;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-
 /**
  * This class provides the user interface to manage webapps (Sites) features ( manage, create, modify, remove )
  */
 public class WebappcontainerJspBean extends PluginAdminPageJspBean
 {
-    ////////////////////////////////////////////////////////////////////////////
-    // Constants
+	// //////////////////////////////////////////////////////////////////////////
+	// Constants
 
-    // Right
-    public static final String RIGHT_MANAGE_WEBAPPCONTAINER = "WEBAPPCONTAINER_MANAGEMENT";
+	// Right
+	public static final String RIGHT_MANAGE_WEBAPPCONTAINER = "WEBAPPCONTAINER_MANAGEMENT";
 
-    // Jsp
-    private static final String JSP_URL_SITES_LIST = "ManageSites.jsp";
-    private static final String JSP_URL_DO_REMOVE_SITE = "DoRemoveSite.jsp";
-    private static final String JSP_URL_PREFIX = "jsp/admin/plugins/webappcontainer/";
+	// Jsp
+	private static final String JSP_URL_SITES_LIST = "ManageSites.jsp";
 
-    // properties for page titles
-    private static final String PROPERTY_PAGE_TITLE_SITES = "webappcontainer.manage_sites.pageTitle";
-    private static final String PROPERTY_PAGE_TITLE_CREATE = "webappcontainer.create_site.pageTitle";
-    private static final String PROPERTY_PAGE_TITLE_MODIFY = "webappcontainer.modify_site.pageTitle";
+	private static final String JSP_URL_DO_REMOVE_SITE = "DoRemoveSite.jsp";
 
-    // Properties for proxy
-    private static final String PROPERTY_PROXY_HOST = "webappcontainer.httpAccess.proxyHost";
-    private static final String PROPERTY_PROXY_PORT = "webappcontainer.httpAccess.proxyPort";
+	private static final String JSP_URL_PREFIX = "jsp/admin/plugins/webappcontainer/";
 
-    // Markers
-    private static final String MARK_SITES_LIST = "sites_list";
-    private static final String MARK_WORKGROUPS_LIST = "workgroup_keys_list";
-    private static final String MARK_SITE = "site";
-    private static final String MARK_WORKGROUP_KEY_DEFAULT_VALUE = "workgroup_key_default_value";
-    private static final String MARK_PROXY_HOST = "proxy_host";
-    private static final String MARK_PROXY_PORT = "proxy_port";
+	// properties for page titles
+	private static final String PROPERTY_PAGE_TITLE_SITES = "webappcontainer.manage_sites.pageTitle";
 
-    // templates
-    private static final String TEMPLATE_SITES = "/admin/plugins/webappcontainer/manage_sites.html";
-    private static final String TEMPLATE_CREATE_SITE = "/admin/plugins/webappcontainer/create_site.html";
-    private static final String TEMPLATE_MODIFY_SITE = "/admin/plugins/webappcontainer/modify_site.html";
+	private static final String PROPERTY_PAGE_TITLE_CREATE = "webappcontainer.create_site.pageTitle";
 
-    // I18n messages
-    private static final String MESSAGE_ERROR_SITE_CODE = "webappcontainer.message.errorSiteCode";
-    private static final String MESSAGE_ERROR_SITE_CODE_ALREADY_EXISTS = "webappcontainer.message.errorSiteCodeAlreadyExists";
-    private static final String MESSAGE_CONFIRM_REMOVE_SITE = "webappcontainer.message.confirmRemoveSite";
+	private static final String PROPERTY_PAGE_TITLE_MODIFY = "webappcontainer.modify_site.pageTitle";
 
-    // Parameters
-    private static final String PARAMETER_CODE = "site_code";
-    private static final String PARAMETER_OLD_CODE = "site_old_code";
-    private static final String PARAMETER_URL = "site_url";
-    private static final String PARAMETER_DESCRIPTION = "site_description";
-    private static final String PARAMETER_WORKGROUP_KEY = "site_workgroup_key";
-    private static final String PARAMETER_REBUILD_HTML_PAGE = "site_rebuild_html_page";
-    private static final String PARAMETER_REDIRECT_NON_HTML_CONTENT = "site_redirect_non_html_content";
-    private static final String PARAMETER_USE_PROXY = "site_use_proxy";
+	// Properties for proxy
+	private static final String PROPERTY_PROXY_HOST = "webappcontainer.httpAccess.proxyHost";
 
-    /**
-     * Returns the list of sites
-     *
-     * @param request The Http request
-     * @return the sites list
-     */
-    public String getManageSites( HttpServletRequest request )
-    {
-        setPageTitleProperty( PROPERTY_PAGE_TITLE_SITES );
+	private static final String PROPERTY_PROXY_PORT = "webappcontainer.httpAccess.proxyPort";
 
-        Collection<Site> listSites = SiteHome.findAll( getPlugin(  ) );
-        listSites = AdminWorkgroupService.getAuthorizedCollection( listSites, getUser(  ) );
+	private static final String PROPERTY_SITE_DEFAULT_ENCODING = "webappcontainer.site.default.encoding";
 
-        Map<String, Object> rootModel = new HashMap<String, Object>(  );
-        rootModel.put( MARK_SITES_LIST, listSites );
+	// Markers
+	private static final String MARK_SITES_LIST = "sites_list";
 
-        HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_SITES, getLocale(  ), rootModel );
+	private static final String MARK_WORKGROUPS_LIST = "workgroup_keys_list";
 
-        return getAdminPage( templateList.getHtml(  ) );
-    }
+	private static final String MARK_SITE = "site";
 
-    /**
-     * Returns the form to create a {@link Site}
-     *
-     * @param request The Http request
-     * @return the html code of the {@link Site} form
-     */
-    public String getCreateSite( HttpServletRequest request )
-    {
-        setPageTitleProperty( PROPERTY_PAGE_TITLE_CREATE );
+	private static final String MARK_WORKGROUP_KEY_DEFAULT_VALUE = "workgroup_key_default_value";
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        ReferenceList workgroupsList = AdminWorkgroupService.getUserWorkgroups( getUser(  ), getLocale(  ) );
-        model.put( MARK_WORKGROUPS_LIST, workgroupsList );
-        model.put( MARK_WORKGROUP_KEY_DEFAULT_VALUE, AdminWorkgroupService.ALL_GROUPS );
-        model.put( MARK_PROXY_HOST, AppPropertiesService.getProperty( PROPERTY_PROXY_HOST ) );
-        model.put( MARK_PROXY_PORT, AppPropertiesService.getProperty( PROPERTY_PROXY_PORT ) );
+	private static final String MARK_PROXY_HOST = "proxy_host";
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_SITE, getLocale(  ), model );
+	private static final String MARK_PROXY_PORT = "proxy_port";
 
-        return getAdminPage( template.getHtml(  ) );
-    }
+	private static final String MARK_WEBAPP_URL = "webapp_url";
 
-    /**
-     * Process the data capture form of a new contact
-     *
-     * @param request The Http Request
-     * @return The Jsp URL of the process result
-     */
-    public String doCreateSite( HttpServletRequest request )
-    {
-        String strCode = request.getParameter( PARAMETER_CODE );
-        String strUrl = request.getParameter( PARAMETER_URL );
-        String strDescription = request.getParameter( PARAMETER_DESCRIPTION );
-        String strWorkgroupKey = request.getParameter( PARAMETER_WORKGROUP_KEY );
-        String strRebuildHtmlPage = request.getParameter( PARAMETER_REBUILD_HTML_PAGE );
-        String strRedirectNonHtmlContent = request.getParameter( PARAMETER_REDIRECT_NON_HTML_CONTENT );
-        String strUseProxy = request.getParameter( PARAMETER_USE_PROXY );
+	private static final String MARK_LOCALE = "locale";
 
-        // Mandatory field
-        if ( ( strCode == null ) || strCode.equals( "" ) || ( strUrl == null ) || strUrl.equals( "" ) ||
-                ( strDescription == null ) || strDescription.equals( "" ) || ( strWorkgroupKey == null ) ||
-                !StringUtil.checkCodeKey( strWorkgroupKey ) )
-        {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
-        }
+	// templates
+	private static final String TEMPLATE_SITES = "/admin/plugins/webappcontainer/manage_sites.html";
 
-        if ( !StringUtil.checkCodeKey( strCode ) )
-        {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_SITE_CODE, AdminMessage.TYPE_STOP );
-        }
+	private static final String TEMPLATE_CREATE_SITE = "/admin/plugins/webappcontainer/create_site.html";
 
-        if ( SiteHome.findByPrimaryKey( strCode, getPlugin(  ) ) != null )
-        {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_SITE_CODE_ALREADY_EXISTS,
-                AdminMessage.TYPE_STOP );
-        }
+	private static final String TEMPLATE_MODIFY_SITE = "/admin/plugins/webappcontainer/modify_site.html";
 
-        Site site = new Site(  );
-        site.setCode( strCode );
-        site.setUrl( strUrl );
-        site.setDescription( strDescription );
-        site.setWorkgroup( strWorkgroupKey );
+	// I18n messages
+	private static final String MESSAGE_ERROR_SITE_CODE = "webappcontainer.message.errorSiteCode";
 
-        if ( ( strRebuildHtmlPage != null ) && strRebuildHtmlPage.equals( Boolean.TRUE.toString(  ) ) )
-        {
-            site.setRebuildHtmlPage( true );
-        }
-        else
-        {
-            site.setRebuildHtmlPage( false );
-        }
+	private static final String MESSAGE_ERROR_SITE_CODE_ALREADY_EXISTS = "webappcontainer.message.errorSiteCodeAlreadyExists";
 
-        if ( ( strRedirectNonHtmlContent != null ) && strRedirectNonHtmlContent.equals( Boolean.TRUE.toString(  ) ) )
-        {
-            site.setRedirectNonHtmlContent( true );
-        }
-        else
-        {
-            site.setRedirectNonHtmlContent( false );
-        }
+	private static final String MESSAGE_CONFIRM_REMOVE_SITE = "webappcontainer.message.confirmRemoveSite";
 
-        if ( ( strUseProxy != null ) && strUseProxy.equals( Boolean.TRUE.toString(  ) ) )
-        {
-            site.setUseProxy( true );
-        }
-        else
-        {
-            site.setUseProxy( false );
-        }
+	// Parameters
+	private static final String PARAMETER_CODE = "site_code";
 
-        SiteHome.create( site, getPlugin(  ) );
+	private static final String PARAMETER_OLD_CODE = "site_old_code";
 
-        // If the operation is successful, redirect towards the list of sites
-        UrlItem url = new UrlItem( JSP_URL_SITES_LIST );
+	private static final String PARAMETER_URL = "site_url";
 
-        return url.getUrl(  );
-    }
+	private static final String PARAMETER_DESCRIPTION = "site_description";
 
-    /**
-     * Returns the form to update info about a {@link Site}
-     *
-     * @param request The Http request
-     * @return The HTML form to update info
-     */
-    public String getModifySite( HttpServletRequest request )
-    {
-        setPageTitleProperty( PROPERTY_PAGE_TITLE_MODIFY );
+	private static final String PARAMETER_ENCODING = "site_encoding";
 
-        String strCode = request.getParameter( PARAMETER_CODE );
-        Site site = SiteHome.findByPrimaryKey( strCode, getPlugin(  ) );
+	private static final String PARAMETER_HAT = "site_hat";
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        ReferenceList workgroupsList = AdminWorkgroupService.getUserWorkgroups( getUser(  ), getLocale(  ) );
-        model.put( MARK_WORKGROUPS_LIST, workgroupsList );
-        model.put( MARK_SITE, site );
-        model.put( MARK_PROXY_HOST, AppPropertiesService.getProperty( PROPERTY_PROXY_HOST ) );
-        model.put( MARK_PROXY_PORT, AppPropertiesService.getProperty( PROPERTY_PROXY_PORT ) );
+	private static final String PARAMETER_WORKGROUP_KEY = "site_workgroup_key";
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_SITE, getLocale(  ), model );
+	private static final String PARAMETER_REBUILD_HTML_PAGE = "site_rebuild_html_page";
 
-        return getAdminPage( template.getHtml(  ) );
-    }
+	private static final String PARAMETER_REDIRECT_NON_HTML_CONTENT = "site_redirect_non_html_content";
 
-    /**
-     * Process the change form of a {@link Site}
-     *
-     * @param request The Http request
-     * @return The Jsp URL of the process result
-     * @throws AccessDeniedException if used is not authorized to modify {@link Site}
-     */
-    public String doModifySite( HttpServletRequest request )
-        throws AccessDeniedException
-    {
-        String strCode = request.getParameter( PARAMETER_CODE );
-        String strOldCode = request.getParameter( PARAMETER_OLD_CODE );
-        String strUrl = request.getParameter( PARAMETER_URL );
-        String strDescription = request.getParameter( PARAMETER_DESCRIPTION );
-        String strWorkgroupKey = request.getParameter( PARAMETER_WORKGROUP_KEY );
-        String strRebuildHtmlPage = request.getParameter( PARAMETER_REBUILD_HTML_PAGE );
-        String strRedirectNonHtmlContent = request.getParameter( PARAMETER_REDIRECT_NON_HTML_CONTENT );
-        String strUseProxy = request.getParameter( PARAMETER_USE_PROXY );
+	private static final String PARAMETER_USE_PROXY = "site_use_proxy";
 
-        // Mandatory field
-        if ( ( strOldCode == null ) || strOldCode.equals( "" ) || ( strCode == null ) || strCode.equals( "" ) ||
-                ( strUrl == null ) || strUrl.equals( "" ) || ( strDescription == null ) || strDescription.equals( "" ) ||
-                ( strWorkgroupKey == null ) || !StringUtil.checkCodeKey( strWorkgroupKey ) )
-        {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
-        }
+	/**
+	 * Returns the list of sites
+	 * 
+	 * @param request The Http request
+	 * @return the sites list
+	 */
+	public String getManageSites( HttpServletRequest request )
+	{
+		setPageTitleProperty( PROPERTY_PAGE_TITLE_SITES );
 
-        Site oldSite = SiteHome.findByPrimaryKey( strOldCode, getPlugin(  ) );
+		Collection<Site> listSites = SiteHome.findAll( getPlugin() );
+		listSites = AdminWorkgroupService.getAuthorizedCollection( listSites, getUser() );
 
-        if ( !AdminWorkgroupService.isAuthorized( oldSite, getUser(  ) ) )
-        {
-            throw new AccessDeniedException(  );
-        }
+		Map<String, Object> rootModel = new HashMap<String, Object>();
+		rootModel.put( MARK_SITES_LIST, listSites );
 
-        if ( oldSite == null )
-        {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
-        }
+		HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_SITES, getLocale(), rootModel );
 
-        if ( !StringUtil.checkCodeKey( strCode ) )
-        {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_SITE_CODE, AdminMessage.TYPE_STOP );
-        }
+		return getAdminPage( templateList.getHtml() );
+	}
 
-        if ( !strOldCode.equals( strCode ) && ( SiteHome.findByPrimaryKey( strCode, getPlugin(  ) ) != null ) )
-        {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_SITE_CODE_ALREADY_EXISTS,
-                AdminMessage.TYPE_STOP );
-        }
+	/**
+	 * Returns the form to create a {@link Site}
+	 * 
+	 * @param request The Http request
+	 * @return the html code of the {@link Site} form
+	 */
+	public String getCreateSite( HttpServletRequest request )
+	{
+		setPageTitleProperty( PROPERTY_PAGE_TITLE_CREATE );
 
-        Site site = oldSite;
-        site.setCode( strCode );
-        site.setUrl( strUrl );
-        site.setDescription( strDescription );
-        site.setWorkgroup( strWorkgroupKey );
+		Map<String, Object> model = new HashMap<String, Object>();
+		ReferenceList workgroupsList = AdminWorkgroupService.getUserWorkgroups( getUser(), getLocale() );
+		model.put( MARK_WORKGROUPS_LIST, workgroupsList );
+		model.put( MARK_WORKGROUP_KEY_DEFAULT_VALUE, AdminWorkgroupService.ALL_GROUPS );
+		model.put( MARK_PROXY_HOST, AppPropertiesService.getProperty( PROPERTY_PROXY_HOST ) );
+		model.put( MARK_PROXY_PORT, AppPropertiesService.getProperty( PROPERTY_PROXY_PORT ) );
+		model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
+		model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage() );
 
-        if ( ( strRebuildHtmlPage != null ) && strRebuildHtmlPage.equals( Boolean.TRUE.toString(  ) ) )
-        {
-            site.setRebuildHtmlPage( true );
-        }
-        else
-        {
-            site.setRebuildHtmlPage( false );
-        }
+		HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_SITE, getLocale(), model );
 
-        if ( ( strRedirectNonHtmlContent != null ) && strRedirectNonHtmlContent.equals( Boolean.TRUE.toString(  ) ) )
-        {
-            site.setRedirectNonHtmlContent( true );
-        }
-        else
-        {
-            site.setRedirectNonHtmlContent( false );
-        }
+		return getAdminPage( template.getHtml() );
+	}
 
-        if ( ( strUseProxy != null ) && strUseProxy.equals( Boolean.TRUE.toString(  ) ) )
-        {
-            site.setUseProxy( true );
-        }
-        else
-        {
-            site.setUseProxy( false );
-        }
+	/**
+	 * Process the data capture form of a new contact
+	 * 
+	 * @param request The Http Request
+	 * @return The Jsp URL of the process result
+	 */
+	public String doCreateSite( HttpServletRequest request )
+	{
+		String strCode = request.getParameter( PARAMETER_CODE );
+		String strUrl = request.getParameter( PARAMETER_URL );
+		String strDescription = request.getParameter( PARAMETER_DESCRIPTION );
+		String strEncoding = request.getParameter( PARAMETER_ENCODING );
+		String strHat = request.getParameter( PARAMETER_HAT );
+		String strWorkgroupKey = request.getParameter( PARAMETER_WORKGROUP_KEY );
+		String strRebuildHtmlPage = request.getParameter( PARAMETER_REBUILD_HTML_PAGE );
+		String strRedirectNonHtmlContent = request.getParameter( PARAMETER_REDIRECT_NON_HTML_CONTENT );
+		String strUseProxy = request.getParameter( PARAMETER_USE_PROXY );
 
-        if ( !strCode.equals( strOldCode ) )
-        {
-            SiteHome.remove( strOldCode, getPlugin(  ) );
-            SiteHome.create( site, getPlugin(  ) );
-        }
-        else
-        {
-            SiteHome.update( site, getPlugin(  ) );
-        }
+		// Mandatory field
+		if ( ( strCode == null ) || strCode.equals( "" ) || ( strUrl == null ) || strUrl.equals( "" ) || ( strDescription == null ) || strDescription.equals( "" ) || ( strWorkgroupKey == null )
+				|| !StringUtil.checkCodeKey( strWorkgroupKey ) )
+		{
+			return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+		}
 
-        // If the operation is successful, redirect towards the list of sites
-        UrlItem url = new UrlItem( JSP_URL_SITES_LIST );
+		if ( !StringUtil.checkCodeKey( strCode ) )
+		{
+			return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_SITE_CODE, AdminMessage.TYPE_STOP );
+		}
 
-        return url.getUrl(  );
-    }
+		if ( SiteHome.findByPrimaryKey( strCode, getPlugin() ) != null )
+		{
+			return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_SITE_CODE_ALREADY_EXISTS, AdminMessage.TYPE_STOP );
+		}
 
-    /**
-     * Return the {@link Site} removal form
-     * @param request The Http request
-     * @return The Html template
-     */
-    public String getConfirmRemoveSite( HttpServletRequest request )
-    {
-        UrlItem url = new UrlItem( JSP_URL_PREFIX + JSP_URL_DO_REMOVE_SITE );
-        url.addParameter( PARAMETER_CODE, request.getParameter( PARAMETER_CODE ) );
+		if ( StringUtils.isBlank( strEncoding ) )
+		{
+			strEncoding = AppPropertiesService.getProperty( PROPERTY_SITE_DEFAULT_ENCODING );
+		}
 
-        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_SITE, url.getUrl(  ),
-            AdminMessage.TYPE_CONFIRMATION );
-    }
+		Site site = new Site();
+		site.setCode( strCode );
+		site.setUrl( strUrl );
+		site.setDescription( strDescription );
+		site.setEncoding( strEncoding );
+		site.setHat( strHat );
+		site.setWorkgroup( strWorkgroupKey );
 
-    /**
-     * Processes {@link Site} removal
-     * @param request The Http request
-     * @return The URL to redirect to
-     */
-    public String doRemoveSite( HttpServletRequest request )
-    {
-        String strCode = request.getParameter( PARAMETER_CODE );
-        Site site = SiteHome.findByPrimaryKey( strCode, getPlugin(  ) );
+		if ( ( strRebuildHtmlPage != null ) && strRebuildHtmlPage.equals( Boolean.TRUE.toString() ) )
+		{
+			site.setRebuildHtmlPage( true );
+		}
+		else
+		{
+			site.setRebuildHtmlPage( false );
+		}
 
-        if ( site == null )
-        {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
-        }
+		if ( ( strRedirectNonHtmlContent != null ) && strRedirectNonHtmlContent.equals( Boolean.TRUE.toString() ) )
+		{
+			site.setRedirectNonHtmlContent( true );
+		}
+		else
+		{
+			site.setRedirectNonHtmlContent( false );
+		}
 
-        SiteHome.remove( site.getCode(  ), getPlugin(  ) );
+		if ( ( strUseProxy != null ) && strUseProxy.equals( Boolean.TRUE.toString() ) )
+		{
+			site.setUseProxy( true );
+		}
+		else
+		{
+			site.setUseProxy( false );
+		}
 
-        // If the operation is successful, redirect towards the list of sites
-        return JSP_URL_SITES_LIST;
-    }
+		SiteHome.create( site, getPlugin() );
+
+		// If the operation is successful, redirect towards the list of sites
+		UrlItem url = new UrlItem( JSP_URL_SITES_LIST );
+
+		return url.getUrl();
+	}
+
+	/**
+	 * Returns the form to update info about a {@link Site}
+	 * 
+	 * @param request The Http request
+	 * @return The HTML form to update info
+	 */
+	public String getModifySite( HttpServletRequest request )
+	{
+		setPageTitleProperty( PROPERTY_PAGE_TITLE_MODIFY );
+
+		String strCode = request.getParameter( PARAMETER_CODE );
+		Site site = SiteHome.findByPrimaryKey( strCode, getPlugin() );
+
+		Map<String, Object> model = new HashMap<String, Object>();
+		ReferenceList workgroupsList = AdminWorkgroupService.getUserWorkgroups( getUser(), getLocale() );
+		model.put( MARK_WORKGROUPS_LIST, workgroupsList );
+		model.put( MARK_SITE, site );
+		model.put( MARK_PROXY_HOST, AppPropertiesService.getProperty( PROPERTY_PROXY_HOST ) );
+		model.put( MARK_PROXY_PORT, AppPropertiesService.getProperty( PROPERTY_PROXY_PORT ) );
+		model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
+		model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage() );
+
+		HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_SITE, getLocale(), model );
+
+		return getAdminPage( template.getHtml() );
+	}
+
+	/**
+	 * Process the change form of a {@link Site}
+	 * 
+	 * @param request The Http request
+	 * @return The Jsp URL of the process result
+	 * @throws AccessDeniedException if used is not authorized to modify {@link Site}
+	 */
+	public String doModifySite( HttpServletRequest request ) throws AccessDeniedException
+	{
+		String strCode = request.getParameter( PARAMETER_CODE );
+		String strOldCode = request.getParameter( PARAMETER_OLD_CODE );
+		String strUrl = request.getParameter( PARAMETER_URL );
+		String strDescription = request.getParameter( PARAMETER_DESCRIPTION );
+		String strEncoding = request.getParameter( PARAMETER_ENCODING );
+		String strHat = request.getParameter( PARAMETER_HAT );
+		String strWorkgroupKey = request.getParameter( PARAMETER_WORKGROUP_KEY );
+		String strRebuildHtmlPage = request.getParameter( PARAMETER_REBUILD_HTML_PAGE );
+		String strRedirectNonHtmlContent = request.getParameter( PARAMETER_REDIRECT_NON_HTML_CONTENT );
+		String strUseProxy = request.getParameter( PARAMETER_USE_PROXY );
+
+		// Mandatory field
+		if ( ( strOldCode == null ) || strOldCode.equals( "" ) || ( strCode == null ) || strCode.equals( "" ) || ( strUrl == null ) || strUrl.equals( "" ) || ( strDescription == null )
+				|| strDescription.equals( "" ) || ( strWorkgroupKey == null ) || !StringUtil.checkCodeKey( strWorkgroupKey ) )
+		{
+			return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+		}
+
+		Site oldSite = SiteHome.findByPrimaryKey( strOldCode, getPlugin() );
+
+		if ( !AdminWorkgroupService.isAuthorized( oldSite, getUser() ) )
+		{
+			throw new AccessDeniedException();
+		}
+
+		if ( oldSite == null )
+		{
+			return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+		}
+
+		if ( !StringUtil.checkCodeKey( strCode ) )
+		{
+			return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_SITE_CODE, AdminMessage.TYPE_STOP );
+		}
+
+		if ( !strOldCode.equals( strCode ) && ( SiteHome.findByPrimaryKey( strCode, getPlugin() ) != null ) )
+		{
+			return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_SITE_CODE_ALREADY_EXISTS, AdminMessage.TYPE_STOP );
+		}
+
+		if ( StringUtils.isBlank( strEncoding ) )
+		{
+			strEncoding = AppPropertiesService.getProperty( PROPERTY_SITE_DEFAULT_ENCODING );
+		}
+
+		Site site = oldSite;
+		site.setCode( strCode );
+		site.setUrl( strUrl );
+		site.setDescription( strDescription );
+		site.setEncoding( strEncoding );
+		site.setHat( strHat );
+		site.setWorkgroup( strWorkgroupKey );
+
+		if ( ( strRebuildHtmlPage != null ) && strRebuildHtmlPage.equals( Boolean.TRUE.toString() ) )
+		{
+			site.setRebuildHtmlPage( true );
+		}
+		else
+		{
+			site.setRebuildHtmlPage( false );
+		}
+
+		if ( ( strRedirectNonHtmlContent != null ) && strRedirectNonHtmlContent.equals( Boolean.TRUE.toString() ) )
+		{
+			site.setRedirectNonHtmlContent( true );
+		}
+		else
+		{
+			site.setRedirectNonHtmlContent( false );
+		}
+
+		if ( ( strUseProxy != null ) && strUseProxy.equals( Boolean.TRUE.toString() ) )
+		{
+			site.setUseProxy( true );
+		}
+		else
+		{
+			site.setUseProxy( false );
+		}
+
+		if ( !strCode.equals( strOldCode ) )
+		{
+			SiteHome.remove( strOldCode, getPlugin() );
+			SiteHome.create( site, getPlugin() );
+		}
+		else
+		{
+			SiteHome.update( site, getPlugin() );
+		}
+
+		// If the operation is successful, redirect towards the list of sites
+		UrlItem url = new UrlItem( JSP_URL_SITES_LIST );
+
+		return url.getUrl();
+	}
+
+	/**
+	 * Return the {@link Site} removal form
+	 * @param request The Http request
+	 * @return The Html template
+	 */
+	public String getConfirmRemoveSite( HttpServletRequest request )
+	{
+		UrlItem url = new UrlItem( JSP_URL_PREFIX + JSP_URL_DO_REMOVE_SITE );
+		url.addParameter( PARAMETER_CODE, request.getParameter( PARAMETER_CODE ) );
+
+		return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_SITE, url.getUrl(), AdminMessage.TYPE_CONFIRMATION );
+	}
+
+	/**
+	 * Processes {@link Site} removal
+	 * @param request The Http request
+	 * @return The URL to redirect to
+	 */
+	public String doRemoveSite( HttpServletRequest request )
+	{
+		String strCode = request.getParameter( PARAMETER_CODE );
+		Site site = SiteHome.findByPrimaryKey( strCode, getPlugin() );
+
+		if ( site == null )
+		{
+			return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+		}
+
+		SiteHome.remove( site.getCode(), getPlugin() );
+
+		// If the operation is successful, redirect towards the list of sites
+		return JSP_URL_SITES_LIST;
+	}
 }

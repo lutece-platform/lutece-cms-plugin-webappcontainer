@@ -35,137 +35,178 @@ package fr.paris.lutece.plugins.webappcontainer.business;
 
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
 
-
 /**
- *
+ * 
  * @author ELY
- *
+ * 
  */
 public class Site implements AdminWorkgroupResource
 {
-    private String _strCode;
-    private String _strUrl;
-    private String _strDescription;
-    private String _strWorkgroupKey;
-    private boolean _bRebuildHtmlPage;
-    private boolean _bRedirectNonHtmlContent;
-    private boolean _bUseProxy;
+	private String _strCode;
 
-    /**
-     * @return the code
-     */
-    public String getCode(  )
-    {
-        return _strCode;
-    }
+	private String _strUrl;
 
-    /**
-     * @param strCode the code to set
-     */
-    public void setCode( String strCode )
-    {
-        this._strCode = strCode;
-    }
+	private String _strDescription;
 
-    /**
-     * @return the url
-     */
-    public String getUrl(  )
-    {
-        return _strUrl;
-    }
+	private String _strEncoding;
 
-    /**
-     * @param strUrl the url to set
-     */
-    public void setUrl( String strUrl )
-    {
-        this._strUrl = strUrl;
-    }
+	private String _strHat;
 
-    /**
-     * @return the description
-     */
-    public String getDescription(  )
-    {
-        return _strDescription;
-    }
+	private String _strWorkgroupKey;
 
-    /**
-     * @param strDescription the description to set
-     */
-    public void setDescription( String strDescription )
-    {
-        this._strDescription = strDescription;
-    }
+	private boolean _bRebuildHtmlPage;
 
-    /**
-     * @param strWorkgroupKey the Workgroup key to set
-     */
-    public void setWorkgroup( String strWorkgroupKey )
-    {
-        this._strWorkgroupKey = strWorkgroupKey;
-    }
+	private boolean _bRedirectNonHtmlContent;
 
-    /**
-     * @return the Workgroup key
-     */
-    public String getWorkgroup(  )
-    {
-        return _strWorkgroupKey;
-    }
+	private boolean _bUseProxy;
 
-    /**
-     * Set to true to redirect non-HTML contents (images, CSS, ...), false else
-     * @param bRedirectNonHtmlContent The bRedirectNonHtmlContent value to set
-     */
-    public void setRedirectNonHtmlContent( boolean bRedirectNonHtmlContent )
-    {
-        this._bRedirectNonHtmlContent = bRedirectNonHtmlContent;
-    }
+	/**
+	 * @return the code
+	 */
+	public String getCode()
+	{
+		return _strCode;
+	}
 
-    /**
-    * Return true if the process redirect non-HTML content (images, CSS, ...), false else
-     * @return true if the process redirect non-HTML content (images, CSS, ...), false else
-     */
-    public boolean isRedirectNonHtmlContent(  )
-    {
-        return _bRedirectNonHtmlContent;
-    }
+	/**
+	 * @param strCode the code to set
+	 */
+	public void setCode( String strCode )
+	{
+		this._strCode = strCode;
+	}
 
-    /**
-     * Set to true if the process must rebuild the HTML page (merge head and body contents), false else
-     * @param bRebuildHtmlPage The bRebuildHtmlPage value to set
-     */
-    public void setRebuildHtmlPage( boolean bRebuildHtmlPage )
-    {
-        this._bRebuildHtmlPage = bRebuildHtmlPage;
-    }
+	/**
+	 * @return the url
+	 */
+	public String getUrl()
+	{
+		return _strUrl;
+	}
 
-    /**
-     * Return true if the process must rebuild the HTML page (merge head and body contents), false else
-     * @return true if the process must rebuild the HTML page (merge head and body contents), false else
-     */
-    public boolean isRebuildHtmlPage(  )
-    {
-        return _bRebuildHtmlPage;
-    }
+	/**
+	 * @param strUrl the url to set
+	 */
+	public void setUrl( String strUrl )
+	{
+		this._strUrl = strUrl;
+	}
 
-    /**
-     * Set to true if the process must use the proxy defined in the plugin property file, false else
-     * @param bUseProxy The bUseProxy value to set
-     */
-    public void setUseProxy( boolean bUseProxy )
-    {
-        this._bUseProxy = bUseProxy;
-    }
+	/**
+	 * @return the description
+	 */
+	public String getDescription()
+	{
+		return _strDescription;
+	}
 
-    /**
-     * Return true if the process must use the proxy defined in the plugin property file, false else
-     * @return true if the process must use the proxy defined in the plugin property file, false else
-     */
-    public boolean isUseProxy(  )
-    {
-        return _bUseProxy;
-    }
+	/**
+	 * @param strDescription the description to set
+	 */
+	public void setDescription( String strDescription )
+	{
+		this._strDescription = strDescription;
+	}
+
+	/**
+	 * @return the encoding
+	 */
+	public String getEncoding()
+	{
+		return _strEncoding;
+	}
+
+	/**
+	 * @param strEncoding the encoding to set
+	 */
+	public void setEncoding( String strEncoding )
+	{
+		_strEncoding = strEncoding;
+	}
+
+	/**
+	 * @param strHat the hat of the site to set
+	 */
+	public void setHat( String strHat )
+	{
+		_strHat = strHat;
+	}
+
+	/**
+	 * @return the hat of the site
+	 */
+	public String getHat()
+	{
+		return _strHat;
+	}
+
+	/**
+	 * @param strWorkgroupKey the Workgroup key to set
+	 */
+	public void setWorkgroup( String strWorkgroupKey )
+	{
+		this._strWorkgroupKey = strWorkgroupKey;
+	}
+
+	/**
+	 * @return the Workgroup key
+	 */
+	public String getWorkgroup()
+	{
+		return _strWorkgroupKey;
+	}
+
+	/**
+	 * Set to true to redirect non-HTML contents (images, CSS, ...), false else
+	 * @param bRedirectNonHtmlContent The bRedirectNonHtmlContent value to set
+	 */
+	public void setRedirectNonHtmlContent( boolean bRedirectNonHtmlContent )
+	{
+		this._bRedirectNonHtmlContent = bRedirectNonHtmlContent;
+	}
+
+	/**
+	 * Return true if the process redirect non-HTML content (images, CSS, ...), false else
+	 * @return true if the process redirect non-HTML content (images, CSS, ...), false else
+	 */
+	public boolean isRedirectNonHtmlContent()
+	{
+		return _bRedirectNonHtmlContent;
+	}
+
+	/**
+	 * Set to true if the process must rebuild the HTML page (merge head and body contents), false else
+	 * @param bRebuildHtmlPage The bRebuildHtmlPage value to set
+	 */
+	public void setRebuildHtmlPage( boolean bRebuildHtmlPage )
+	{
+		this._bRebuildHtmlPage = bRebuildHtmlPage;
+	}
+
+	/**
+	 * Return true if the process must rebuild the HTML page (merge head and body contents), false else
+	 * @return true if the process must rebuild the HTML page (merge head and body contents), false else
+	 */
+	public boolean isRebuildHtmlPage()
+	{
+		return _bRebuildHtmlPage;
+	}
+
+	/**
+	 * Set to true if the process must use the proxy defined in the plugin property file, false else
+	 * @param bUseProxy The bUseProxy value to set
+	 */
+	public void setUseProxy( boolean bUseProxy )
+	{
+		this._bUseProxy = bUseProxy;
+	}
+
+	/**
+	 * Return true if the process must use the proxy defined in the plugin property file, false else
+	 * @return true if the process must use the proxy defined in the plugin property file, false else
+	 */
+	public boolean isUseProxy()
+	{
+		return _bUseProxy;
+	}
 }

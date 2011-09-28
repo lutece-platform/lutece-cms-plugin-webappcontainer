@@ -1,3 +1,5 @@
+<#include "/admin/util/editor/editor.html" />
+
 <div class="content-box" >
 <h2>#i18n{webappcontainer.create_site.adminTitle}</h2>
 <form method="post" name="create_site" action="jsp/admin/plugins/webappcontainer/DoCreateSite.jsp">
@@ -13,6 +15,17 @@
        		<label for="site_description">#i18n{webappcontainer.create_site.labelDescription}</label> * :
             <input type="text" name="site_description" id="site_description" tabindex="3" size="50" maxlength="500"/>
         </p>
+        <p>
+       		<label for="site_encoding">#i18n{webappcontainer.create_site.labelEncoding}</label> :
+            <input type="text" name="site_encoding" id="site_encoding" tabindex="3" size="50" maxlength="500"/>
+        </p>
+        <p>
+       		<label for="site_hat">#i18n{webappcontainer.modify_site.labelHat}</label> :        	
+        	<div  class="editor" >
+	     			<textarea name="site_hat" id="site_hat" rows="20" cols="70" class="richtext" style="width:70%"></textarea>
+		 		<br/>
+		 	</div>
+        </p> 
 		<p>
             <label for="site_workgroup_key">#i18n{webappcontainer.create_site.labelWorkgroupKey}</label> * :
 			<@combo name="site_workgroup_key" default_value="${workgroup_key_default_value}" items=workgroup_keys_list />
@@ -38,4 +51,4 @@
 </form>
 </div>
 
-
+<@initEditor />
