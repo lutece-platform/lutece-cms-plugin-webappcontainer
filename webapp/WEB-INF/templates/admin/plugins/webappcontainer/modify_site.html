@@ -1,57 +1,90 @@
 <#include "/admin/util/editor/editor.html" />
-
-<div class="content-box" >
-<h2>#i18n{webappcontainer.modify_site.adminTitle}</h2>
-<form method="post" name="modify_site" action="jsp/admin/plugins/webappcontainer/DoModifySite.jsp">
-        <p>
-       		<label for="site_code">#i18n{webappcontainer.modify_site.labelCode}</label> * :
-            <input type="text" name="site_code" id="site_code" tabindex="1" size="50" maxlength="50" value="${site.code!}" />
-        </p>
-        <p>
-       		<label for=site_url>#i18n{webappcontainer.modify_site.labelUrl}</label> * :
-            <input type="text" name="site_url" id="site_url" tabindex="2" size="50" maxlength="500" value="${site.url!}"/>
-        </p>
-        <p>
-       		<label for="site_description">#i18n{webappcontainer.modify_site.labelDescription}</label> * :
-            <input type="text" name="site_description" id="site_description" tabindex="3" size="50" maxlength="500" value="${site.description!}" />
-        </p>
-        <p>
-       		<label for="site_encoding">#i18n{webappcontainer.modify_site.labelEncoding}</label> :
-            <input type="text" name="site_encoding" id="site_encoding" tabindex="3" size="50" maxlength="500" value="${site.encoding!}" />
-        </p>
-        <p>
-       		<label for="site_hat">#i18n{webappcontainer.modify_site.labelHat}</label> :        	
-        	<div  class="editor" >
-	     			<textarea name="site_hat" id="site_hat" rows="20" cols="70" class="richtext" style="width:70%">${site.hat!}</textarea>
-		 		<br/>
-		 	</div>
-        </p>      
-		<p>
-            <label for="site_workgroup_key">#i18n{webappcontainer.modify_site.labelWorkgroupKey}</label> * :
-			<@combo name="site_workgroup_key" default_value="${site.workgroup!}" items=workgroup_keys_list />
-		</p>
-		<p>
-            <label for="site_rebuild_html_page">&nbsp;</label>&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="checkbox" <#if site.rebuildHtmlPage >checked="checked"</#if> name="site_rebuild_html_page" id="site_rebuild_html_page" value="true" />#i18n{webappcontainer.modify_site.labelRebuildHtmlPage}
-		</p>
-		<p>
-            <label for="site_redirect_non_html_content">&nbsp;</label>&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="checkbox" <#if site.redirectNonHtmlContent >checked="checked"</#if> name="site_redirect_non_html_content" id="site_redirect_non_html_content" value="true" />#i18n{webappcontainer.modify_site.labelRedirectNonHtmlContent}
-		</p>
+<div class="row-fluid" >
+	<div class="span12" >
+	<fieldset>
+		<legend>#i18n{webappcontainer.modify_site.adminTitle}</legend>
+		<form class="form-horizontal" method="post" name="modify_site" action="jsp/admin/plugins/webappcontainer/DoModifySite.jsp">
+		<input type="hidden" name="site_old_code" value="${site.code!}" >
+        <div class="control-group">
+			<label class="control-label" for="site_code">#i18n{webappcontainer.modify_site.labelCode} *</label>
+			<div class="controls">
+				<input type="text" name="site_code" id="site_code" tabindex="1" class="input-normal" maxlength="50" value="${site.code!}">
+			</div>
+		</div>
+        <div class="control-group">
+		<label class="control-label" for=site_url>#i18n{webappcontainer.modify_site.labelUrl} *</label>
+            <div class="controls">
+				<input type="text" name="site_url" id="site_url" tabindex="2" class="input-normal" maxlength="500" value="${site.url!}">
+				<p class="help-block">#i18n{webappcontainer.create_site.commentUrl}</p>
+			</div>
+		</div>
+        <div class="control-group">
+		<label class="control-label" for="site_description">#i18n{webappcontainer.modify_site.labelDescription} *</label>
+			<div class="controls">
+				<input type="text" name="site_description" id="site_description" tabindex="3" class="input-xlarge" maxlength="500" value="${site.description!}">
+			</div>
+		</div>
+        <div class="control-group">
+		<label class="control-label" for="site_encoding">#i18n{webappcontainer.modify_site.labelEncoding}</label>
+            <div class="controls">
+				<input type="text" name="site_encoding" id="site_encoding" tabindex="3" class="input-small" maxlength="500" value="${site.encoding!}" >
+				<p class="help-block">UTF-8, ISO-8859-1,...</p>
+			</div>
+		</div>
+        <div class="control-group">
+		<label class="control-label" for="site_hat">#i18n{webappcontainer.modify_site.labelHat}</label>        	
+        	<div class="controls">
+				<textarea name="site_hat" id="site_hat" rows="20" cols="70" class="richtext" style="width:70%">${site.hat!}</textarea>
+			</div>
+		</div>
+		<div class="control-group">
+		<label class="control-label" for="site_workgroup_key">#i18n{webappcontainer.modify_site.labelWorkgroupKey} *</label>
+			<div class="controls">
+				<@combo name="site_workgroup_key" default_value="${site.workgroup!}" items=workgroup_keys_list />
+			</div>
+		</div>
+		<div class="control-group">
+		<label class="control-label" for="">&nbsp;</label>
+			<div class="controls">
+				<label class="checked" for="site_rebuild_html_page">
+					<input type="checkbox" <#if site.rebuildHtmlPage >checked="checked"</#if> name="site_rebuild_html_page" id="site_rebuild_html_page" value="true" >
+					#i18n{webappcontainer.modify_site.labelRebuildHtmlPage}
+				</label>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="">&nbsp;</label>
+				<div class="controls">
+				<label class="checked"  for="site_redirect_non_html_content">
+					<input type="checkbox" <#if site.redirectNonHtmlContent >checked="checked"</#if> name="site_redirect_non_html_content" id="site_redirect_non_html_content" value="true" />
+					#i18n{webappcontainer.modify_site.labelRedirectNonHtmlContent}
+				</label>
+			</div>
+		</div>
 		<#if proxy_host?has_content && proxy_port?has_content>
-			<p>
-	            <label for="site_use_proxy">&nbsp;</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<input type="checkbox" <#if site.useProxy>checked="checked"</#if> name="site_use_proxy" id="site_use_proxy" value="true" />#i18n{webappcontainer.modify_site.labelUseProxy} (${proxy_host}:${proxy_port})
-			</p>
+			<div class="control-group">
+				<label class="control-label" for=""></label>
+				<div class="controls">
+					<label class="checked-label" for="site_use_proxy">
+						<input type="checkbox" <#if site.useProxy>checked="checked"</#if> name="site_use_proxy" id="site_use_proxy" value="true" />
+						#i18n{webappcontainer.modify_site.labelUseProxy} (${proxy_host}:${proxy_port})
+					</label>
+				</div>
+			</div>
 		<#else>
-			<input type="hidden" name="site_use_proxy" value="${site.useProxy?string}" />
+			<input type="hidden" name="site_use_proxy" value="${site.useProxy?string}">
 		</#if>
-		<p>
-			<input type="hidden" name="site_old_code" value="${site.code!}" />
-			<input type="submit" value="#i18n{webappcontainer.modify_site.buttonLabelModify}" tabindex="5" class="button" />
-			<input class="button" type="button" onclick="javascript:history.go(-1)" value="#i18n{portal.admin.message.buttonCancel}" />
-		</p>
-</form>
+		<div class="form-actions">
+			<button class="btn btn-primary btn-small" type="submit">
+				<i class="icon-ok icon-white"></i>&nbsp;#i18n{webappcontainer.modify_site.buttonLabelModify}
+			</button>
+			<a class="btn btn-small" href="jsp/admin/plugins/webappcontainer/ManageSites.jsp?plugin_name=webappcontainer">
+				<i class="icon-remove-circle"></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
+			</a>
+		</div>
+		</fieldset>
+	</form>
+	</div>
 </div>
 
 <@initEditor />
