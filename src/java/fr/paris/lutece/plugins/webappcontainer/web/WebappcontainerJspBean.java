@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2012, Mairie de Marseille
+ * Copyright (c) 2002-2013, Mairie de Marseille
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
