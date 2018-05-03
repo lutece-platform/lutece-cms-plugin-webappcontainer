@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2013, Mairie de Marseille
+ * Copyright (c) 2002-2017, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13,7 +13,7 @@
  *     and the following disclaimer in the documentation and/or other materials
  *     provided with the distribution.
  *
- *  3. Neither the name of 'Mairie de Marseille' nor 'Lutece' nor the names of its
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
  *     contributors may be used to endorse or promote products derived from
  *     this software without specific prior written permission.
  *
